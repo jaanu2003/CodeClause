@@ -9,15 +9,17 @@ if(isset($save))
 	}
 	else
 	{
-$sql=mysqli_query($conn,"select * from admin where pass='$op'");
+$op=md5($op);
+
+$sql=mysqli_query($conn,"select * from user where pass='$op'");
 $r=mysqli_num_rows($sql);
 if($r==true)
 {
 
 	if($np==$cp)
 	{
-
-	$sql=mysqli_query($conn,"update admin set pass='$np' where user='$admin'");
+	$np=md5($np);
+	$sql=mysqli_query($conn,"update user set pass='$np' where email='$user'");
 
 	$err="<font color='blue'>Password updated </font>";
 	}
@@ -37,7 +39,7 @@ $err="<font color='red'>Wrong Old Password </font>";
 }
 
 ?>
-<h2>UPDATE PASSWORD</h2>
+<h2><B>UPDATE PASSWORD</B></h2>
 <form method="post">
 
 	<div class="row">

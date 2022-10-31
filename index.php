@@ -1,11 +1,9 @@
 <?php 
 session_start();
 include('../connection.php');
-$admin= $_SESSION['admin'];
-if($admin=="")
-{
-header('location:login.php');
-}
+$user= $_SESSION['user'];
+$sql=mysqli_query($conn,"select * from user where email='$user' ");
+$users=mysqli_fetch_assoc($sql);
 ?>
 <!DOCTYPE html>
 <html lang="en">
@@ -18,7 +16,7 @@ header('location:login.php');
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Online Notice Board Admin Dashboard</title>
+    <title>Online Notice Board User Dashboard</title>
 
     <!-- Bootstrap core CSS -->
     <link href="../css/bootstrap.min.css" rel="stylesheet">
@@ -51,7 +49,7 @@ header('location:login.php');
             <span class="icon-bar"></span>
             <span class="icon-bar"></span>
           </button>
-          <a class="navbar-brand" href="#">Welcome Admin !</a>
+          <a class="navbar-brand" href="#">Hello <?php echo $users['name'];?></a>
         </div>
         <div id="navbar" class="navbar-collapse collapse">
           <ul class="nav navbar-nav navbar-right">
@@ -72,15 +70,29 @@ header('location:login.php');
             <li class="active"><a href="index.php">Dashboard <span class="sr-only">(current)</span></a></li>
 			<!-- find users' image if image not found then show dummy image -->
 			
-			
-            <li><a href="#"><img src="../images/person.jpg" width="100" height="100" alt="not found"/></a></li>
-			
+			<!-- check users profile image -->
+			<?php 
+			$q=mysqli_query($conn,"select image from user where email='".$_SESSION['user']."'");
+			$row=mysqli_fetch_assoc($q);
+			if($row['image']=="")
+			{
+			?>
+            <li><a href="index.php?page=update_profile_pic"><img title="Update Your profile pic Click here" style="border-radius:50px" src="../images/person.jpg" width="100" height="100" alt="not found"/></a></li>
+			<?php 
+			}
+			else
+			{
+			?>
+			<li><a href="index.php?page=update_profile_pic"><img title="Update Your profile pic Click here"  style="border-radius:50px" src="../images/<?php echo $_SESSION['user'];?>/<?php echo $row['image'];?>" width="100" height="100" alt="not found"/></a></li>
+			<?php 
+			}
+			?>
 			
 			
 			
 			<li><a href="index.php?page=update_password"><span class="glyphicon glyphicon-user"></span> Update Password</a></li>
-            <li><a href="index.php?page=manage_users"><span class="glyphicon glyphicon-user"></span> Manage Users</a></li>
-			 <li><a href="index.php?page=notification"><span class="glyphicon glyphicon-envelope"></span> Mange  Notification</a></li>
+            <li><a href="index.php?page=update_profile"><span class="glyphicon glyphicon-user"></span> Update Profile</a></li>
+			 <li><a href="index.php?page=notification"><span class="glyphicon glyphicon-envelope"></span> Notification</a></li>
             
           </ul>
          
@@ -92,76 +104,39 @@ header('location:login.php');
 		@$page=  $_GET['page'];
 		  if($page!="")
 		  {
-		  	if($page=="manage_users")
-			{
-				include('manage_users.php');
-			
-			}
-			
-			if($page=="update_password")
+		  	if($page=="update_password")
 			{
 				include('update_password.php');
 			
 			}
-			
 			if($page=="notification")
 			{
-				include('display_notification.php');
+				include('notification.php');
 			
 			}
-			
-			if($page=="update_notice")
+			if($page=="update_profile")
 			{
-				include('update_notice.php');
+				include('update_profile.php');
 			
 			}
-			
-			
-			
-			if($page=="add_notice")
+			if($page=="update_profile_pic")
 			{
-				include('add_notice.php');
+				include('update_profile_pic.php');
 			
 			}
 		  }
-		  
 		  else
 		  {
+		  include('notification.php');
 		  ?>
 		  <!-- container end-->
-		  
-		  
-		
+		   
 		  
 		  <h1 class="page-header">Dashboard</h1>
 		  
-		
-          <div class="row placeholders">
-            <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="200" height="200" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>Label</h4>
-              <span class="text-muted">Something else</span>
-            </div>
-            <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="200" height="200" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>Label</h4>
-              <span class="text-muted">Something else</span>
-            </div>
-            <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="200" height="200" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>Label</h4>
-              <span class="text-muted">Something else</span>
-            </div>
-            <div class="col-xs-6 col-sm-3 placeholder">
-              <img src="data:image/gif;base64,R0lGODlhAQABAIAAAHd3dwAAACH5BAAAAAAALAAAAAABAAEAAAICRAEAOw==" width="200" height="200" class="img-responsive" alt="Generic placeholder thumbnail">
-              <h4>Label</h4>
-              <span class="text-muted">Something else</span>
-            </div>
-          </div>
 		  
-		  <?php } ?>
-		  
-
+<?php } ?>
+          
          
         </div>
       </div>
